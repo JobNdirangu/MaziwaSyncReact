@@ -236,9 +236,137 @@ Admin Module
 Build:
 
 ```text
-LoginComponent.jsx
+Login.jsx
 ```
 
+```jsx
+import React, { useState } from "react";
+import axios from "axios";
+import api from "../../api/api";
+import { AuthContext } from "../../context/AuthContext";
+
+const Login = () => {
+    const { setToken, setUser } = useContext(AuthContext);
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        setLoading(true);
+        setError("");
+
+        const data = {username,password};
+
+        try {
+            const res = await api.post("core/auth/login/", data);
+            console.log("Login success:", res.data);
+
+            // deconstruct
+            const {access,refresh,username,role} = res.data;
+
+            // Create user object
+            const userData = { username, role};
+
+            // Save to context
+            setToken(access);
+            setUser(userData);
+
+            // Save to localStorage
+            localStorage.setItem("access", access);
+            localStorage.setItem("refresh", refresh);
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            // ROLE-BASED REDIRECT
+            if (role === "admin") {
+                navigate("/admin-dashboard");
+            } else if (role === "farmer") {
+                navigate("/farmer-dashboard");
+            } else if (role === "potter") {
+                navigate("/potter-dashboard");
+            } else {
+                navigate("/not-authorized");
+            }
+
+
+        } catch (error) {
+            setError(error.response?.data?.error || "Login failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-200">
+            <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm" >
+                <h1 className="text-2xl font-bold text-center mb-6 text-green-600"> Login </h1>
+
+                {/* SUCCESS MESSAGE */}
+                {success && (<div className="mb-4 text-green-600 bg-green-100 p-2 rounded text-sm text-center"> {success}</div>)}
+
+                {/* ERROR MESSAGE */}
+                {error && (<div className="mb-4 text-red-600 bg-red-100 p-2 rounded text-sm text-center"> {error} </div>)}
+
+                <input type="text" placeholder="Username" className="input-field mb-5" required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+
+                <input type="password" placeholder="Password" className="input-field mb-5" required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button type="submit" disabled={loading}
+                    className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 disabled:opacity-50"
+                >
+                    {loading ? "Logging in..." : "Login"}
+                </button>
+            </form>
+        </div>
+    );
+};
+
+export default Login;
+```
+---
+###  Axios Instance
+```js
+import axios from "axios";
+
+// Create a reusable Axios instance.
+// This prevents us from repeating the API URL in every request.
+const api = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        // Tell the backend that we are sending JSON data.
+        "Content-Type": "application/json",
+    },
+});
+
+// Interceptors run before every request.
+// Here we automatically attach the JWT access token
+// so protected endpoints can identify the logged-in user.
+api.interceptors.request.use((config) => {
+
+    // Get the token saved after login.
+    const token = localStorage.getItem("access");
+
+    // If a token exists, add it to the Authorization header.
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Always return the config so the request can continue.
+    return config;
+});
+
+export default api;
+```
 Learn:
 
 * Forms
@@ -255,12 +383,106 @@ POST /api/login/
 
 ---
 
-## 2. Context API
+## 2. Context 
 
 Build:
 
 ```text
 AuthContext.jsx
+```
+
+```jsx
+import { createContext, useCallback, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
+// Create a global authentication context
+// This allows us to access user + token anywhere in the app
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+    const navigate = useNavigate();
+
+    // -----------------------------
+    // AUTH STATE (INITIAL LOAD)
+    // -----------------------------
+
+    // Load JWT token from localStorage so login persists on refresh
+    const [token, setToken] = useState(
+        () => localStorage.getItem("access") || ""
+    );
+
+    // Load user data from localStorage (if available)
+    // We wrap JSON.parse in try/catch to avoid app crashes on invalid data
+    const [user, setUser] = useState(() => {
+        try {
+            const stored = localStorage.getItem("user");
+            return stored ? JSON.parse(stored) : null;
+        } catch (err) {
+            return null;
+        }
+    });
+
+    // -----------------------------
+    // LOGOUT FUNCTION
+    // -----------------------------
+
+    // Clears all authentication data and redirects user to login page
+    const logout = useCallback(() => {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+
+        setToken("");
+        setUser(null);
+
+        navigate("/login");
+    }, [navigate]);
+
+    // -----------------------------
+    // TOKEN EXPIRY CHECK
+    // -----------------------------
+
+    // Runs every time token changes
+    // Decodes JWT and checks if it is expired
+    useEffect(() => {
+        if (!token) return;
+
+        try {
+            const decoded = jwtDecode(token);
+
+            // JWT "exp" is in seconds → convert to milliseconds
+            const isExpired = decoded.exp * 1000 < Date.now();
+
+            // If token is expired, force logout
+            if (isExpired) {
+                logout();
+            }
+        } catch (err) {
+            // If token is invalid or corrupted → logout user
+            logout();
+        }
+    }, [token, logout]);
+
+    // -----------------------------
+    // PROVIDER VALUE (GLOBAL STATE)
+    // -----------------------------
+
+    // Everything inside "value" becomes accessible in the app
+    return (
+        <AuthContext.Provider
+            value={{
+                token,      // JWT access token
+                setToken,   // update token after login/refresh
+                user,       // logged-in user data
+                setUser,    // update user info
+                logout,     // manual logout function
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+};
 ```
 
 Responsibilities:
@@ -287,6 +509,30 @@ Build:
 
 ```text
 ProtectedRoute.jsx
+```
+
+```jsx
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import { Navigate } from "react-router-dom";
+
+const ProtectedRoute = ({ children, allowedRoles }) => {
+    const { user } = useContext(AuthContext);
+
+    // Not logged in
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+
+    // Role check
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/not-authorized" />;
+    }
+
+    return children;
+};
+
+export default ProtectedRoute;
 ```
 
 Responsibilities:
