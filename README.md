@@ -195,7 +195,7 @@ src
 ├── components
 │
 │   ├── auth
-│   │   └── LoginComponent.jsx
+│   │   └── Login.jsx
 │   │
 │   ├── admin
 │   │
@@ -547,12 +547,180 @@ Learn:
 Navigate
 Role-Based Access Control
 ```
+---
+Routing for the roles
 
+```jsx
+    <Routes>
+
+        <Route path="/admin-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+              </ProtectedRoute>
+          }/>
+
+        <Route path="/farmer-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["farmer"]}>
+                  <FarmerDashboard />
+              </ProtectedRoute>
+          }/>
+
+        <Route path="/potter-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["potter"]}>
+                  <PotterDashboard />
+              </ProtectedRoute>
+          } />
+
+        <Route path='/' element={<Home/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/not-authorized' element={<NotAuthorized/>}/>
+        <Route path='*' element={<NotFound/>}/>
+    </Routes>
+```
 ---
 
 # Porter Module
 
 Build first because milk collection is the system's core business process.
+
+Prepare the routing we will start with SideBar, DashboardNavBar, PotterLayout
+
+SideBar
+```jsx
+import { NavLink } from "react-router-dom";
+
+const SideBar = () => {
+  const linkClass = ({ isActive }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+      isActive
+        ? "bg-green-600 text-white"
+        : "text-gray-200 hover:bg-white/10"
+    }`;
+
+  return (
+    <aside className="w-64 min-h-screen bg-gradient-to-br from-green-800 to-blue-900 text-white">
+      <div className="p-5">
+        <h2 className="text-2xl font-bold mb-8">
+          MaziwaSync
+        </h2>
+
+        <nav className="space-y-2">
+          <NavLink to="/porter" end className={linkClass}>
+            <i className="bi bi-speedometer2"></i>
+            Dashboard
+          </NavLink>
+
+          <NavLink to="/porter/collect-milk" className={linkClass}>
+            <i className="bi bi-plus-circle"></i>
+            Collect Milk
+          </NavLink>
+
+          <NavLink to="/porter/collections" className={linkClass}>
+            <i className="bi bi-list-check"></i>
+            My Collections
+          </NavLink>
+
+          <NavLink to="/porter/farmers" className={linkClass}>
+            <i className="bi bi-people"></i>
+            Assigned Farmers
+          </NavLink>
+
+          <NavLink to="/porter/notices" className={linkClass}>
+            <i className="bi bi-megaphone"></i>
+            Notices
+          </NavLink>
+
+          <NavLink to="/porter/profile" className={linkClass}>
+            <i className="bi bi-person-circle"></i>
+            Profile
+          </NavLink>
+        </nav>
+      </div>
+    </aside>
+  );
+};
+
+export default SideBar;
+```
+
+Navbar 
+```jsx
+import React, { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+
+const DashboardNavBar = () => {
+    const { user, logout } = useContext(AuthContext);
+
+    return (
+        <nav className="w-full bg-white shadow-md px-6 py-3 mb-4 rounded-lg">
+            <div className="flex items-center justify-between">
+
+                {/* BRAND */}
+                <div className="text-xl font-bold text-green-600 flex items-center gap-2">
+                    <span></span>
+                    <span>MaziwaSync</span>
+                </div>
+
+                {/* USER SECTION */}
+                <div className="flex items-center gap-4">
+
+                    {/* USER INFO */}
+                    <div className="text-sm text-gray-600 flex items-center gap-2">
+                        <span className="text-gray-800 font-semibold">
+                            {user?.username}
+                        </span>
+
+                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                            {user?.role}
+                        </span>
+                    </div>
+
+                    {/* LOGOUT BUTTON */}
+                    <button
+                        onClick={logout}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition"
+                    >
+                         Logout
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+    );
+};
+
+export default DashboardNavBar;
+```
+
+PottersLayout
+
+```jsx
+import React from "react";
+import { Outlet } from "react-router-dom";
+import DashboardNavBar from "../layout/DashboardNavBar";
+import SideBar from "./Sidebar";
+
+const PorterLayout = () => {
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      <SideBar />
+
+      <div className="flex flex-col flex-1">
+        <DashboardNavBar />
+
+        <main className="flex-1 p-6 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default PorterLayout;
+```
 
 ---
 

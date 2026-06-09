@@ -6,6 +6,9 @@ import Home from './components/Home'
 import NotFound from './components/NotFound'
 import NotAuthorized from './components/NotAuthorized'
 import Login from './components/auth/Login'
+import ProtectedRoute from './context/ProtectedRoute'
+import AdminLayout from './components/admin/AdminLayout'
+import PorterLayout from './components/potter/PotterLayout'
 
 function App() {
 
@@ -13,6 +16,28 @@ function App() {
     <Router>
 
       <Routes>
+
+        <Route path="/admin-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminLayout />
+              </ProtectedRoute>
+          }/>
+
+        <Route path="/farmer-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["farmer"]}>
+                  {/* <FarmerDashboard /> */}
+              </ProtectedRoute>
+          }/>
+
+        <Route path="/potter-dashboard"
+          element={
+              <ProtectedRoute allowedRoles={["potter"]}>
+                <PorterLayout/>
+              </ProtectedRoute>
+          } />
+
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/not-authorized' element={<NotAuthorized/>}/>
