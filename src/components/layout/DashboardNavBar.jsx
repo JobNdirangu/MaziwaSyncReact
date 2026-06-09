@@ -1,41 +1,65 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
-const DashboardNavBar = () => {
+const DashboardNavBar = ({ onMenuClick }) => {
     const { user, logout } = useContext(AuthContext);
 
     return (
-        <nav className="w-full bg-white shadow-md px-6 py-3 mb-4 rounded-lg">
+        <nav className="w-full bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 px-4 md:px-6 py-3">
+
             <div className="flex items-center justify-between">
 
-                {/* BRAND */}
-                <div className="text-xl font-bold text-green-600 flex items-center gap-2">
-                    <span></span>
-                    <span>MaziwaSync</span>
-                </div>
+                {/* LEFT SIDE */}
+                <div className="flex items-center gap-3">
 
-                {/* USER SECTION */}
-                <div className="flex items-center gap-4">
-
-                    {/* USER INFO */}
-                    <div className="text-sm text-gray-600 flex items-center gap-2">
-                        <span className="text-gray-800 font-semibold">
-                            {user?.username}
-                        </span>
-
-                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
-                            {user?.role}
-                        </span>
-                    </div>
-
-                    {/* LOGOUT BUTTON */}
+                    {/* MOBILE MENU */}
                     <button
-                        onClick={logout}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition"
+                        onClick={onMenuClick}
+                        className="md:hidden text-2xl text-gray-700 active:scale-95 transition"
                     >
-                         Logout
+                        ☰
                     </button>
 
+                    {/* BRAND */}
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
+                            M
+                        </div>
+
+                        <span className="text-lg md:text-xl font-bold text-green-600">
+                            MaziwaSync
+                        </span>
+                    </div>
+                </div>
+
+                {/* RIGHT SIDE */}
+                <div className="flex items-center gap-3 md:gap-4">
+
+                    {/* USER CARD (hidden only on very small screens) */}
+                    <div className="hidden sm:flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full">
+
+                        <div className="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+                            {user?.username?.charAt(0).toUpperCase()}
+                        </div>
+
+                        <div className="flex flex-col leading-tight">
+                            <span className="text-sm font-semibold text-gray-800">
+                                {user?.username}
+                            </span>
+
+                            <span className="text-xs text-green-600 font-medium">
+                                {user?.role}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* LOGOUT */}
+                    <button
+                        onClick={logout}
+                        className="px-3 md:px-4 py-1.5 text-sm rounded-lg border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition active:scale-95"
+                    >
+                        Logout
+                    </button>
                 </div>
             </div>
         </nav>

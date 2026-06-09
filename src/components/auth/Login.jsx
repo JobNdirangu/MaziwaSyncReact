@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import api from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const { setToken, setUser } = useContext(AuthContext);
@@ -11,6 +12,8 @@ const Login = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const navigate = useNavigate()
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -44,8 +47,8 @@ const Login = () => {
                 navigate("/admin-dashboard");
             } else if (role === "farmer") {
                 navigate("/farmer-dashboard");
-            } else if (role === "potter") {
-                navigate("/potter-dashboard");
+            } else if (role === "porter") {
+                navigate("/porter-dashboard");
             } else {
                 navigate("/not-authorized");
             }

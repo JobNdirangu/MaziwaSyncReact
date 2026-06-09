@@ -9,11 +9,13 @@ import Login from './components/auth/Login'
 import ProtectedRoute from './context/ProtectedRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import PorterLayout from './components/potter/PotterLayout'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
 
   return (
     <Router>
+      <AuthProvider>
 
       <Routes>
 
@@ -31,9 +33,9 @@ function App() {
               </ProtectedRoute>
           }/>
 
-        <Route path="/potter-dashboard"
+        <Route path="/porter-dashboard"
           element={
-              <ProtectedRoute allowedRoles={["potter"]}>
+              <ProtectedRoute allowedRoles={["porter"]}>
                 <PorterLayout/>
               </ProtectedRoute>
           } />
@@ -44,6 +46,7 @@ function App() {
         <Route path='*' element={<NotFound/>}/>
       </Routes>
     
+      </AuthProvider>
     </Router>
   )
 }

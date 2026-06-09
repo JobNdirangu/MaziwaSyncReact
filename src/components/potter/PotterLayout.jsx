@@ -1,22 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
+import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
 import DashboardNavBar from "../layout/DashboardNavBar";
-import SideBar from "./Sidebar";
 
 const PorterLayout = () => {
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      <SideBar />
+    const [isOpen, setIsOpen] = useState(false);
 
-      <div className="flex flex-col flex-1">
-        <DashboardNavBar />
+    return (
+        <div className="flex h-screen overflow-hidden bg-gray-100">
 
-        <main className="flex-1 p-6 overflow-y-auto">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
+            {/* SIDEBAR */}
+            <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
+
+            {/* MAIN AREA */}
+            <div className="flex flex-col flex-1 h-full">
+
+                {/* NAVBAR */}
+                <DashboardNavBar onMenuClick={() => setIsOpen(true)} />
+
+                {/* PAGE CONTENT */}
+                <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                    <Outlet />
+                </main>
+
+            </div>
+        </div>
+    );
 };
 
 export default PorterLayout;

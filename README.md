@@ -547,30 +547,40 @@ Learn:
 Navigate
 Role-Based Access Control
 ```
+
+The app uses React Router v6 with role-based protected routes.
+
+All routes are wrapped inside AuthProvider so authentication state is globally accessible.
 ---
 Routing for the roles
 
 ```jsx
-    <Routes>
+    <Router>
+        {/* Wrap the entire application with AuthProvider
+        so authentication state (user, token, logout)
+        is available to all routes and protected pages */}
+      <AuthProvider>
+
+      <Routes>
 
         <Route path="/admin-dashboard"
           element={
               <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
+                  <AdminLayout />
               </ProtectedRoute>
           }/>
 
         <Route path="/farmer-dashboard"
           element={
               <ProtectedRoute allowedRoles={["farmer"]}>
-                  <FarmerDashboard />
+                  {/* <FarmerDashboard /> */}
               </ProtectedRoute>
           }/>
 
         <Route path="/potter-dashboard"
           element={
               <ProtectedRoute allowedRoles={["potter"]}>
-                  <PotterDashboard />
+                <PorterLayout/>
               </ProtectedRoute>
           } />
 
@@ -578,7 +588,10 @@ Routing for the roles
         <Route path='/login' element={<Login/>}/>
         <Route path='/not-authorized' element={<NotAuthorized/>}/>
         <Route path='*' element={<NotFound/>}/>
-    </Routes>
+      </Routes>
+    
+      </AuthProvider>
+    </Router>
 ```
 ---
 
@@ -588,11 +601,18 @@ Build first because milk collection is the system's core business process.
 
 Prepare the routing we will start with SideBar, DashboardNavBar, PotterLayout
 
+App Shell
+│
+├── Sidebar (navigation)
+├── Navbar (top bar)
+└── Main Content (Outlet)
+
 SideBar
 ```jsx
+
 import { NavLink } from "react-router-dom";
 
-const SideBar = () => {
+const SideBar = ({ isOpen, setIsOpen }) => {
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-3 rounded-lg transition ${
       isActive
@@ -601,91 +621,134 @@ const SideBar = () => {
     }`;
 
   return (
-    <aside className="w-64 min-h-screen bg-gradient-to-br from-green-800 to-blue-900 text-white">
-      <div className="p-5">
-        <h2 className="text-2xl font-bold mb-8">
-          MaziwaSync
-        </h2>
+    <>
+      {/* BACKDROP (mobile only) */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/50 md:hidden z-40"
+        />
+      )}
 
-        <nav className="space-y-2">
-          <NavLink to="/porter" end className={linkClass}>
-            <i className="bi bi-speedometer2"></i>
-            Dashboard
-          </NavLink>
+      <aside
+        className={`
+          fixed md:static z-50
+          top-0 left-0 h-full w-64
+          bg-gradient-to-br from-green-800 to-blue-900 text-white
+          transform transition-transform duration-300
 
-          <NavLink to="/porter/collect-milk" className={linkClass}>
-            <i className="bi bi-plus-circle"></i>
-            Collect Milk
-          </NavLink>
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+        <div className="p-5">
+          <h2 className="text-2xl font-bold mb-8">
+            MaziwaSync
+          </h2>
 
-          <NavLink to="/porter/collections" className={linkClass}>
-            <i className="bi bi-list-check"></i>
-            My Collections
-          </NavLink>
+          <nav className="space-y-2">
+            <NavLink to="/porter" end className={linkClass}>
+              <i className="bi bi-speedometer2"></i>
+              Dashboard
+            </NavLink>
 
-          <NavLink to="/porter/farmers" className={linkClass}>
-            <i className="bi bi-people"></i>
-            Assigned Farmers
-          </NavLink>
+            <NavLink to="/porter/collect-milk" className={linkClass}>
+              <i className="bi bi-plus-circle"></i>
+              Collect Milk
+            </NavLink>
 
-          <NavLink to="/porter/notices" className={linkClass}>
-            <i className="bi bi-megaphone"></i>
-            Notices
-          </NavLink>
+            <NavLink to="/porter/collections" className={linkClass}>
+              <i className="bi bi-list-check"></i>
+              My Collections
+            </NavLink>
 
-          <NavLink to="/porter/profile" className={linkClass}>
-            <i className="bi bi-person-circle"></i>
-            Profile
-          </NavLink>
-        </nav>
-      </div>
-    </aside>
+            <NavLink to="/porter/farmers" className={linkClass}>
+              <i className="bi bi-people"></i>
+              Assigned Farmers
+            </NavLink>
+
+            <NavLink to="/porter/notices" className={linkClass}>
+              <i className="bi bi-megaphone"></i>
+              Notices
+            </NavLink>
+
+            <NavLink to="/porter/profile" className={linkClass}>
+              <i className="bi bi-person-circle"></i>
+              Profile
+            </NavLink>
+          </nav>
+        </div>
+      </aside>
+    </>
   );
 };
 
 export default SideBar;
 ```
 
-Navbar 
+DashboardNavBar 
 ```jsx
 import React, { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
-const DashboardNavBar = () => {
+const DashboardNavBar = ({ onMenuClick }) => {
     const { user, logout } = useContext(AuthContext);
 
     return (
-        <nav className="w-full bg-white shadow-md px-6 py-3 mb-4 rounded-lg">
+        <nav className="w-full bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 px-4 md:px-6 py-3">
+
             <div className="flex items-center justify-between">
 
-                {/* BRAND */}
-                <div className="text-xl font-bold text-green-600 flex items-center gap-2">
-                    <span></span>
-                    <span>MaziwaSync</span>
-                </div>
+                {/* LEFT SIDE */}
+                <div className="flex items-center gap-3">
 
-                {/* USER SECTION */}
-                <div className="flex items-center gap-4">
-
-                    {/* USER INFO */}
-                    <div className="text-sm text-gray-600 flex items-center gap-2">
-                        <span className="text-gray-800 font-semibold">
-                            {user?.username}
-                        </span>
-
-                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
-                            {user?.role}
-                        </span>
-                    </div>
-
-                    {/* LOGOUT BUTTON */}
+                    {/* MOBILE MENU */}
                     <button
-                        onClick={logout}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition"
+                        onClick={onMenuClick}
+                        className="md:hidden text-2xl text-gray-700 active:scale-95 transition"
                     >
-                         Logout
+                        ☰
                     </button>
 
+                    {/* BRAND */}
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
+                            M
+                        </div>
+
+                        <span className="text-lg md:text-xl font-bold text-green-600">
+                            MaziwaSync
+                        </span>
+                    </div>
+                </div>
+
+                {/* RIGHT SIDE */}
+                <div className="flex items-center gap-3 md:gap-4">
+
+                    {/* USER CARD (hidden only on very small screens) */}
+                    <div className="hidden sm:flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full">
+
+                        <div className="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+                            {user?.username?.charAt(0).toUpperCase()}
+                        </div>
+
+                        <div className="flex flex-col leading-tight">
+                            <span className="text-sm font-semibold text-gray-800">
+                                {user?.username}
+                            </span>
+
+                            <span className="text-xs text-green-600 font-medium">
+                                {user?.role}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* LOGOUT */}
+                    <button
+                        onClick={logout}
+                        className="px-3 md:px-4 py-1.5 text-sm rounded-lg border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition active:scale-95"
+                    >
+                        Logout
+                    </button>
                 </div>
             </div>
         </nav>
@@ -696,27 +759,44 @@ export default DashboardNavBar;
 ```
 
 PottersLayout
+Porter Layout (Main Structure)
+Overview
+
+This layout controls:
+
+Sidebar visibility
+Navbar
+Page rendering
 
 ```jsx
-import React from "react";
+import React, { useState } from "react";
+import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
 import DashboardNavBar from "../layout/DashboardNavBar";
-import SideBar from "./Sidebar";
 
 const PorterLayout = () => {
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      <SideBar />
+    const [isOpen, setIsOpen] = useState(false);
 
-      <div className="flex flex-col flex-1">
-        <DashboardNavBar />
+    return (
+        <div className="flex h-screen overflow-hidden bg-gray-100">
 
-        <main className="flex-1 p-6 overflow-y-auto">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
+            {/* SIDEBAR */}
+            <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
+
+            {/* MAIN AREA */}
+            <div className="flex flex-col flex-1 h-full">
+
+                {/* NAVBAR */}
+                <DashboardNavBar onMenuClick={() => setIsOpen(true)} />
+
+                {/* PAGE CONTENT */}
+                <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                    <Outlet />
+                </main>
+
+            </div>
+        </div>
+    );
 };
 
 export default PorterLayout;
