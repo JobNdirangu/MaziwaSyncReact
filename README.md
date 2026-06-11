@@ -767,9 +767,9 @@ const DashboardNavBar = ({ onMenuClick }) => {
 export default DashboardNavBar;
 ```
 
-PottersLayout
-Porter Layout (Main Structure)
+## PottersLayout
 Overview
+![Screenshot](screenshots/outlet.PNG)
 
 This layout controls:
 
