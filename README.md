@@ -603,14 +603,18 @@ Routing for the roles
 Build first because milk collection is the system's core business process.
 
 Prepare the routing we will start with SideBar, DashboardNavBar, PotterLayout
-
+```text
 App Shell
 │
 ├── Sidebar (navigation)
 ├── Navbar (top bar)
 └── Main Content (Outlet)
+```
 
-SideBar
+
+## SideBar
+
+![Screenshot](screenshot/sidebar.PNG)
 ```jsx
 
 import { NavLink } from "react-router-dom";
@@ -688,7 +692,9 @@ const SideBar = ({ isOpen, setIsOpen }) => {
 export default SideBar;
 ```
 
-DashboardNavBar 
+## DashboardNavBar 
+![Screenshot](screenshot/navbar.PNG)
+
 ```jsx
 import React, { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";

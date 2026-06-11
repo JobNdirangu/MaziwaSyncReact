@@ -10,6 +10,12 @@ import ProtectedRoute from './context/ProtectedRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import PorterLayout from './components/potter/PotterLayout'
 import { AuthProvider } from './context/AuthContext'
+import PotterDashboard from './components/potter/PotterDashboard'
+import CollectMilk from './components/potter/CollectMilk'
+import MyCollections from './components/potter/MyCollections'
+import AssignedFarmers from './components/potter/AssignedFarmers'
+import Notices from './components/potter/Notices'
+import MyProfile from './components/potter/MyProfile'
 
 function App() {
 
@@ -38,7 +44,15 @@ function App() {
               <ProtectedRoute allowedRoles={["porter"]}>
                 <PorterLayout/>
               </ProtectedRoute>
-          } />
+          }>
+              <Route  path='' element={<PotterDashboard/>}/>  
+              <Route  path='porter/collect-milk' element={<CollectMilk/>}/> 
+              <Route  path='porter/collections' element={<MyCollections/>}/>
+              <Route  path='porter/farmers' element={<AssignedFarmers/>}/>
+              <Route  path='porter/notices' element={<Notices/>}/>
+              <Route  path='porter/profile' element={<MyProfile/>}/>
+          </Route> 
+
 
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>

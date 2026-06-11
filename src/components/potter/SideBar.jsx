@@ -34,32 +34,32 @@ const SideBar = ({ isOpen, setIsOpen }) => {
           </h2>
 
           <nav className="space-y-2">
-            <NavLink to="/porter" end className={linkClass}>
+            <NavLink to="/porter-dashboard" end className={linkClass}>
               <i className="bi bi-speedometer2"></i>
               Dashboard
             </NavLink>
 
-            <NavLink to="/porter/collect-milk" className={linkClass}>
+            <NavLink to="/porter-dashboard/porter/collect-milk" className={linkClass}>
               <i className="bi bi-plus-circle"></i>
               Collect Milk
             </NavLink>
 
-            <NavLink to="/porter/collections" className={linkClass}>
+            <NavLink to="/porter-dashboard/porter/collections" className={linkClass}>
               <i className="bi bi-list-check"></i>
               My Collections
             </NavLink>
 
-            <NavLink to="/porter/farmers" className={linkClass}>
+            <NavLink to="/porter-dashboard/porter/farmers" className={linkClass}>
               <i className="bi bi-people"></i>
               Assigned Farmers
             </NavLink>
 
-            <NavLink to="/porter/notices" className={linkClass}>
+            <NavLink to="/porter-dashboard/porter/notices" className={linkClass}>
               <i className="bi bi-megaphone"></i>
               Notices
             </NavLink>
 
-            <NavLink to="/porter/profile" className={linkClass}>
+            <NavLink to="/porter-dashboard/porter/profile" className={linkClass}>
               <i className="bi bi-person-circle"></i>
               Profile
             </NavLink>
