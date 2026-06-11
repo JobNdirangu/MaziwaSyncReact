@@ -614,7 +614,7 @@ App Shell
 
 ## SideBar
 
-![Screenshot](screenshot/sidebar.PNG)
+![Screenshot](screenshots/sidebar.PNG)
 ```jsx
 
 import { NavLink } from "react-router-dom";
@@ -693,7 +693,7 @@ export default SideBar;
 ```
 
 ## DashboardNavBar 
-![Screenshot](screenshot/navbar.PNG)
+![Screenshot](screenshots/navbar.PNG)
 
 ```jsx
 import React, { useContext } from "react";
