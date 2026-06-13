@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/api";
 
-const Notices = () => {
+const FarmerNotices = () => {
     const [notices, setNotices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -9,7 +9,7 @@ const Notices = () => {
     
     const fetchNotices = async () => {
         try {
-            const res = await api.get("porters/notices/");
+            const res = await api.get("farmers/notices/");
             setNotices(res.data);
         } catch (err) {
             setError("Failed to load notices.");
@@ -85,4 +85,4 @@ const Notices = () => {
     );
 };
 
-export default Notices;
+export default FarmerNotices;
