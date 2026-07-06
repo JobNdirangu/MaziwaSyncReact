@@ -23,6 +23,15 @@ import FarmerNotices from './components/farmer/FarmerNotices'
 import FarmerMilk from './components/farmer/FarmerMilk'
 import FarmerDashboard from './components/farmer/FarmerDashboard'
 import FarmerFeedback from './components/farmer/FarmerFeedback'
+import AdminDashboard from './components/admin/AdminDashboard'
+import ListPorters from './components/admin/ListPorters'
+import AddPorter from './components/admin/AddPorter'
+import ListFarmers from './components/admin/ListFarmers'
+import AddFarmer from './components/admin/AddFarmer'
+import Collections from './components/admin/Collections'
+import FarmerBalances from './components/admin/FarmerBalances'
+import PayFarmer from './components/admin/PayFarmer'
+import NoticesAdmin from './components/admin/NoticesAdmin'
 
 
 function App() {
@@ -38,7 +47,17 @@ function App() {
               <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminLayout />
               </ProtectedRoute>
-          }/>
+          }>
+            <Route  path='' element={<AdminDashboard/>}/>
+            <Route  path='porters' element={<ListPorters/>}/> 
+            <Route  path='porters/add' element={<AddPorter/>}/> 
+            <Route  path='farmers' element={<ListFarmers/>}/>
+            <Route  path='farmers/add' element={<AddFarmer/>}/>
+            <Route  path="collections" element={<Collections />} />
+            <Route  path="balances" element={<FarmerBalances />} />
+            <Route  path="balances/pay-farmer"  element={<PayFarmer />} />
+            <Route  path="notices" element={<NoticesAdmin />} />
+          </Route>
 
         <Route path="/farmer-dashboard"
           element={
