@@ -38,11 +38,10 @@
   }
 
   .stat-value {
-    @apply text-2xl font-bold;
+    @apply text-2xl font-bold text-green-600;
   }
 
   .stat-value-success {
     @apply text-2xl font-bold text-green-600;
   }
-
 }

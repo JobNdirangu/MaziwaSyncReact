@@ -186,7 +186,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 src
 │
 ├── api
-│   └── axios.js
+│   └── api.js
 │
 ├── context
 │   ├── AuthContext.jsx

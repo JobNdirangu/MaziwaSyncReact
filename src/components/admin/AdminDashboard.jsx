@@ -10,7 +10,7 @@ const AdminDashboard = () => {
     // ── Fetch dashboard data ───────────────────────────────
     const fetchDashboard = async () => {
         try {
-            const { data } = await api.get("cooperative/dashboard/");
+            const { data } = await api.get("cooperative/dashboard");
             setData(data);
         } catch (err) {
             toast.error("Failed to load dashboard.");

@@ -11,7 +11,7 @@ const FarmerBalances = () => {
     // ── Fetch all farmer balances ──────────────────────────
     const fetchBalances = async () => {
         try {
-            const { data } = await api.get("cooperative/farmers/balance/");
+            const { data } = await api.get("cooperative/farmer/balance/");
             setFarmers(data);
         } catch (err) {
             toast.error("Failed to load farmer balances.");

@@ -9,7 +9,7 @@ const Notices = () => {
     
     const fetchNotices = async () => {
         try {
-            const res = await api.get("porters/notices/");
+            const res = await api.get("collector/notice/");
             setNotices(res.data);
         } catch (err) {
             setError("Failed to load notices.");

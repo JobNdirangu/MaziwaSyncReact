@@ -25,7 +25,7 @@ const EditPorter = () => {
   useEffect(() => {
     const fetchPorter = async () => {
       try {
-        const { data } = await api.get(`porters/${id}/`);
+        const { data } = await api.get(`cooperative/porters/${id}/`);
         // Pre-fill form with existing values
         setForm({
           first_name: data.first_name,
@@ -59,7 +59,7 @@ const EditPorter = () => {
     setLoading(true);
 
     try {
-      await api.patch(`porters/${id}/`, form); // PATCH = partial update
+      await api.patch(`cooperative/porters/${id}/`, form); // PATCH = partial update
       toast.success("Porter updated successfully!");
       setTimeout(() => navigate("/admin-dashboard/porters"), 1500);
     } catch (err) {

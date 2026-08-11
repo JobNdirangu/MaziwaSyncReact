@@ -10,11 +10,10 @@ const ListFarmers = () => {
 
     const navigate = useNavigate();
 
-
     const fetchFarmers = async () => {
         try {
             const { data } = await api.get("cooperative/farmers");
-            setFarmers(data.results);
+            setFarmers(data);
         } catch {
             toast.error("Failed to load farmers");
         } finally {
@@ -22,12 +21,9 @@ const ListFarmers = () => {
         }
     };
 
-
     useEffect(() => {
         fetchFarmers();
     }, []);
-
-
 
     const handleDelete = async (id, name) => {
 
@@ -61,9 +57,9 @@ const ListFarmers = () => {
             </div>
 
             {loading && <p>Loading...</p>}
-            {!loading && !farmers.length && <p>No farmers found</p>}
+            {!loading && !farmers?.length && <p>No farmers found</p>}
 
-            {farmers.length > 0 && (
+            {farmers?.length > 0 && (
 
                 <div>
 

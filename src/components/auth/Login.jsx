@@ -25,20 +25,26 @@ const Login = () => {
 
         try {
             const res = await api.post("core/auth/login/", data);
-            console.log("Login success:", res.data);
+            console.log("try login")
+            console.log("Response", res);
+
+            if (res.data.error){
+                setError(res.data.error)
+            }
 
             // deconstruct
-            const {access,refresh,username,role} = res.data;
+            const {access_token,refresh,username,role} = res.data;
+            console.log("access_token", access_token)
 
             // Create user object
             const userData = { username, role};
 
             // Save to context
-            setToken(access);
+            setToken(access_token);
             setUser(userData);
 
             // Save to localStorage
-            localStorage.setItem("access", access);
+            localStorage.setItem("access_token", access_token);
             localStorage.setItem("refresh", refresh);
             localStorage.setItem("user", JSON.stringify(userData));
 
@@ -49,9 +55,10 @@ const Login = () => {
                 navigate("/farmer-dashboard");
             } else if (role === "porter") {
                 navigate("/porter-dashboard");
-            } else {
-                navigate("/not-authorized");
             }
+            // } else {
+            //     navigate("/not-authorized");
+            // }
 
 
         } catch (error) {

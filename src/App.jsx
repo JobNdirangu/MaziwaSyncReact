@@ -32,6 +32,10 @@ import Collections from './components/admin/Collections'
 import FarmerBalances from './components/admin/FarmerBalances'
 import PayFarmer from './components/admin/PayFarmer'
 import NoticesAdmin from './components/admin/NoticesAdmin'
+import { ToastContainer } from 'react-toastify'
+import EditPorter from './components/admin/EditPorter'
+import EditFarmer from './components/admin/EditFarmer'
+import CattleAi from './components/farmer/CattleAi'
 
 
 function App() {
@@ -39,6 +43,11 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+            />
 
       <Routes>
 
@@ -51,8 +60,11 @@ function App() {
             <Route  path='' element={<AdminDashboard/>}/>
             <Route  path='porters' element={<ListPorters/>}/> 
             <Route  path='porters/add' element={<AddPorter/>}/> 
+            <Route  path='porters/edit/:id' element={<EditPorter/>}/> 
             <Route  path='farmers' element={<ListFarmers/>}/>
             <Route  path='farmers/add' element={<AddFarmer/>}/>
+            <Route  path='farmers/edit/:id' element={<EditFarmer/>}/> 
+
             <Route  path="collections" element={<Collections />} />
             <Route  path="balances" element={<FarmerBalances />} />
             <Route  path="balances/pay-farmer"  element={<PayFarmer />} />
@@ -70,6 +82,7 @@ function App() {
             <Route  path='notices' element={<FarmerNotices/>}/>
             <Route  path='collections' element={<FarmerMilk/>}/>
             <Route  path='feedback' element={<FarmerFeedback/>}/>
+            <Route path="cattle-ai" element={<CattleAi />} />
 
           </Route>
 

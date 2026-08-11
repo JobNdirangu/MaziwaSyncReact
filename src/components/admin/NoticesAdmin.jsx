@@ -20,9 +20,9 @@ const NoticesAdmin = () => {
     // ── Fetch all notices ──────────────────────────────────
     const fetchNotices = async () => {
         try {
-            const { data } = await api.get("cooperative/notices/");
+            const { data } = await api.get("cooperative/notice/");
             // API returns paginated response — results holds the array
-            setNotices(data.results);
+            setNotices(data);
         } catch (err) {
             toast.error("Failed to load notices.");
         } finally {
@@ -47,7 +47,7 @@ const NoticesAdmin = () => {
         setSubmitting(true);
 
         try {
-            await api.post("cooperative/notices/", form);
+            await api.post("cooperative/notice/", form);
             toast.success("Notice posted successfully.");
 
             // ── Reset form after success ──
@@ -71,11 +71,12 @@ const NoticesAdmin = () => {
         if (!confirmed) return;
 
         try {
-            await api.delete(`cooperative/notices/${id}/`);
+            await api.delete(`cooperative/notice/${id}/`);
             toast.success("Notice deleted.");
             fetchNotices();
         } catch (err) {
-            toast.error("Failed to delete notice.");
+            console.log(err)
+            toast.error("Failed to delete notice.", err);
         }
     };
 
@@ -100,6 +101,8 @@ const NoticesAdmin = () => {
         <div className="p-4 max-w-5xl mx-auto">
 
             <h2 className="text-2xl font-bold mb-6">Notices</h2>
+
+            
 
             {/* ════════════════════════════════
                 POST NOTICE FORM

@@ -9,7 +9,7 @@ const PorterDashboard = () => {
     // Fetch dashboard data when component mounts
     const fetchDashboard = async () => {
         try {
-            const res = await api.get("porters/dashboard/");
+            const res = await api.get("collector/dashboard/");
             setDashboard(res.data);
         } catch (err) {
             setError("Failed to load dashboard");

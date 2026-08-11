@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
     // Load JWT token from localStorage so login persists on refresh
     const [token, setToken] = useState(
-        () => localStorage.getItem("access") || ""
+        () => localStorage.getItem("access_token") || ""
     );
 
     // Load user data from localStorage (if available)
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
     // Clears all authentication data and redirects user to login page
     const logout = useCallback(() => {
-        localStorage.removeItem("access");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("refresh");
         localStorage.removeItem("user");
 

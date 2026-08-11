@@ -7,8 +7,8 @@ const MyCollections = () => {
 
     const fetchCollections = async () => {
         try {
-            const { data } = await api.get("porters/collections/my/");
-            setCollections(data.results);
+            const { data } = await api.get("collector/collections/my");
+            setCollections(data);
         } catch (err) {
             console.error(err);
         } finally {
@@ -101,7 +101,7 @@ const MyCollections = () => {
                                         </td>
 
                                         <td className="py-3">
-                                            {item.liters} L
+                                            {item.liters} 
                                         </td>
 
                                         <td className="py-3">

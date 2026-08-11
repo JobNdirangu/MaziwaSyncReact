@@ -3,7 +3,7 @@ import axios from "axios";
 // Create a reusable Axios instance.
 // This prevents us from repeating the API URL in every request.
 const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api/",
+    baseURL: "https://milksync.alwaysdata.net/api/",
     headers: {
         // Tell the backend that we are sending JSON data.
         "Content-Type": "application/json",
@@ -16,11 +16,11 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
 
     // Get the token saved after login.
-    const token = localStorage.getItem("access");
+    const access_token = localStorage.getItem("access_token");
 
     // If a token exists, add it to the Authorization header.
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (access_token) {
+        config.headers.Authorization = `Bearer ${access_token}`;
     }
 
     // Always return the config so the request can continue.

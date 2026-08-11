@@ -59,7 +59,7 @@ const PayFarmer = () => {
             );
 
             // ── Navigate back to balances after success ──
-            setTimeout(() => navigate("/admin-dashboard/farmers/balance"), 5500);
+            setTimeout(() => navigate("/admin-dashboard/balances"), 5500);
 
         } catch (err) {
             const error = err.response?.data;
